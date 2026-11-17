@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS doctor_profiles (
     user_id INT UNIQUE NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     poli_id INT NOT NULL REFERENCES polis(poli_id) ON DELETE RESTRICT,
     bio TEXT,
-	img TEXT
+    img TEXT
 );
 
 -- 4. Tabel Schedules (Jadwal Praktik Dokter)
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     sch_id INT NOT NULL REFERENCES schedules(sch_id) ON DELETE RESTRICT,
     booking_date DATE NOT NULL,
     complaint TEXT NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'done')),
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'done', 'cancelled')),
     rejection_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS medicines (
 );
 
 -- 7. Tabel Medical Records (Rekam Medis - Read-only / Permanen)
-CREATE TABLE medical_records (
+CREATE TABLE IF NOT EXISTS medical_records (
     mr_id SERIAL PRIMARY KEY,
     apt_id INT UNIQUE NOT NULL REFERENCES appointments(apt_id) ON DELETE RESTRICT,
     diagnosis TEXT NOT NULL,
