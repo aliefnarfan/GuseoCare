@@ -35,9 +35,11 @@ export async function GET() {
         s.start_time,
         s.duration,
         a.booking_date,
+        a.booking_date AS apt_date,
         a.complaint,
         a.status,
         a.rejection_reason,
+        a.rejection_reason AS reject_reason,
         a.created_at
       FROM appointments a
       JOIN users p_user ON a.patient_id = p_user.user_id
@@ -67,7 +69,11 @@ export async function POST(request) {
       );
     }
 
-    const { doctor_id, sch_id, booking_date, complaint } = await request.json();
+    const body = await request.json();
+    const doctor_id = body.doctor_id ?? body.doctorId;
+    const sch_id = body.sch_id ?? body.schedule_id ?? body.scheduleId ?? body.schId;
+    const booking_date = body.booking_date ?? body.apt_date ?? body.bookingDate ?? body.date;
+    const complaint = (body.complaint ?? body.symptoms ?? '').trim();
 
     if (!doctor_id || !sch_id || !booking_date || !complaint) {
       return NextResponse.json(

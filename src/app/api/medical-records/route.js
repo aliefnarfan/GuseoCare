@@ -108,7 +108,7 @@ export async function POST(request) {
       await client.query('ROLLBACK');
       return NextResponse.json({ error: 'Janji temu tidak ditemukan.' }, { status: 404 });
     }
-    if (apt.doctor_user_id !== user.user_id) {
+   if (Number(apt.doctor_user_id) !== Number(user.user_id)) {
       await client.query('ROLLBACK');
       return NextResponse.json(
         { error: 'Anda tidak berwenang memeriksa pasien dari dokter lain.' },

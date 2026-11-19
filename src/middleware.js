@@ -7,21 +7,21 @@ export async function middleware(request) {
   const session = token ? await verifySessionToken(token) : null;
 
   // 1. Proteksi rute khusus Admin
-  if (pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/dashboard/admin')) {
     if (!session || session.role !== 'admin') {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
   // 2. Proteksi rute khusus Dokter
-  if (pathname.startsWith('/dokter')) {
+  if (pathname.startsWith('/dashboard/dokter')) {
     if (!session || session.role !== 'dokter') {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
   // 3. Proteksi rute khusus Pasien
-  if (pathname.startsWith('/pasien')) {
+  if (pathname.startsWith('/dashboard/pasien')) {
     if (!session || session.role !== 'pasien') {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -30,9 +30,9 @@ export async function middleware(request) {
   // 4. Jika user sudah login dan membuka /login atau /register, arahkan ke dashboard masing-masing
   if ((pathname === '/login' || pathname === '/register') && session) {
     const dashboardMap = {
-      admin: '/admin',
-      dokter: '/dokter',
-      pasien: '/pasien',
+      admin: '/dashboard/admin',
+      dokter: '/dashboard/dokter',
+      pasien: '/dashboard/pasien',
     };
     return NextResponse.redirect(new URL(dashboardMap[session.role] || '/', request.url));
   }
@@ -41,5 +41,11 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/dokter/:path*', '/pasien/:path*', '/login', '/register'],
+  matcher: [
+    '/dashboard/admin/:path*',
+    '/dashboard/dokter/:path*',
+    '/dashboard/pasien/:path*',
+    '/login',
+    '/register',
+  ],
 };
