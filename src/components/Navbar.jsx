@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { id: 'beranda', label: 'Beranda', href: '/#beranda' },
   { id: 'layanan', label: 'Layanan Poli', href: '/#layanan' },
   { id: 'dokter', label: 'Direktori Dokter', href: '/#dokter' },
+  { id: 'kontak', label: 'Hubungi Kami', href: '/#kontak' },
 ];
 
 export default function Navbar({ user }) {
@@ -33,6 +34,15 @@ export default function Navbar({ user }) {
     }
 
     function handleScroll() {
+      const isAtBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 40;
+
+      if (isAtBottom) {
+        setActiveSection('kontak');
+        return;
+      }
+
       const scrollPosition = window.scrollY + 180;
       let current = 'beranda';
 

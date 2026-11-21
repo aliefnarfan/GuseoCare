@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import Navbar from '@/components/Navbar';
 import DoctorDirectory from '@/components/DoctorDirectory';
+import Footer from '@/components/Footer';
 
 export const dynamic = 'force-dynamic';
 
@@ -129,10 +130,7 @@ export default async function HomePage() {
           />
         </div>
       </section>
-
-      <footer className="border-t border-slate-800 bg-slate-900 py-8 text-center text-xs text-slate-400">
-        © 2026 GuseoCare — Sistem Informasi Manajemen Rumah Sakit Universitas Guseo.
-      </footer>
+      <Footer />
     </div>
   );
 }
