@@ -49,7 +49,7 @@ Pastikan perangkat Anda sudah terpasang:
 
 ### 1. Clone Repositori
 ```bash
-git clone <url-repositori-github-anda>
+git clone https://github.com/aliefnarfan/GuseoCare.git
 cd GuseoCare
 ```
 
