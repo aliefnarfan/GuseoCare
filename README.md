@@ -8,7 +8,7 @@
 
 ### 1. Portal Publik & Autentikasi
 - **Halaman Beranda:** Informasi layanan poliklinik, direktori dokter spesialis lengkap dengan foto profil dan jadwal praktik, serta informasi kontak dan jam besuk.
-- **Autentikasi Berbasis Peran (RBAC):** Login, registrasi pasien mandiri, ubah kata sandi, dan proteksi rute otomatis melalui `middleware.js` untuk peran **Pasien**, **Dokter**, dan **Admin/Farmasi**.
+- **Autentikasi Berbasis Peran (RBAC):** Login, registrasi pasien mandiri, ubah kata sandi, dan proteksi rute otomatis melalui `middleware.js` untuk peran **Pasien**, **Dokter**, dan **Admin**.
 
 ### 2. Dashboard Pasien (`/dashboard/pasien`)
 - **Pendaftaran Konsultasi:** Pemilihan poliklinik, dokter, slot waktu praktik (durasi 30 menit) dengan validasi kecocokan hari dan pencegahan bentrok jadwal (*anti-double booking*), serta panel ringkasan janji temu *real-time*.
@@ -89,26 +89,26 @@ Aplikasi ini menggunakan variabel lingkungan untuk koneksi database PostgreSQL d
    ```sql
    CREATE DATABASE guseocare;
    ```
-2. Jalankan file **`schema.sql`** untuk membuat seluruh tabel, relasi *foreign key*, *constraint*, dan indeks:
+2. Jalankan file **`database/schema.sql`** untuk membuat seluruh tabel, relasi *foreign key*, *constraint*, dan indeks:
    ```bash
-   psql -U postgres -d guseocare -f schema.sql
+   psql -U postgres -d guseocare -f database/schema.sql
    ```
-   *(Atau buka Query Tool di pgAdmin 4 pada database `guseocare`, lalu salin dan jalankan seluruh isi `schema.sql`).*
+   *(Atau buka Query Tool di pgAdmin 4 pada database `guseocare`, lalu salin dan jalankan seluruh isi `database/schema.sql`).*
 
-### 5. Seeding Data Awal (`seed.js`)
-Jalankan skrip `seed.js` untuk mengisi data master poliklinik, obat, jadwal praktik, serta akun demo (1 Admin, 11 Dokter, dan 4 Pasien):
+### 5. Seeding Data Awal (`database/seed.js`)
+Jalankan skrip `database/seed.js` untuk mengisi data master poliklinik, obat, jadwal praktik, serta akun demo (1 Admin, 11 Dokter, dan 4 Pasien):
 
 ```bash
-node --env-file=.env.local seed.js
+node --env-file=.env.local database/seed.js
 ```
 
-> Jika Anda menggunakan Node.js di bawah versi `20.6`, set variabel `DATABASE_URL` terlebih dahulu di terminal sebelum menjalankan `node seed.js`.
+> Jika Anda menggunakan Node.js di bawah versi `20.6`, set variabel `DATABASE_URL` terlebih dahulu di terminal sebelum menjalankan `node database/seed.js`.
 
 #### Akun Demo Bawaan (Hasil Seeding)
 | Peran | Email | Password |
 | :--- | :--- | :--- |
 | **Admin / Farmasi** | `admin@guseocare.id` | `admin123` |
-| **Dokter** | `gye.sujeong@guseocare.id` *(atau email dokter lain di `seed.js`)* | `dokter123` |
+| **Dokter** | `gye.sujeong@guseocare.id` *(atau email dokter lain di `database/seed.js`)* | `dokter123` |
 | **Pasien** | `lee.juhui@guseocare.id` *(atau `ha.miju@guseocare.id`)* | `pasien123` |
 
 ### 6. Jalankan Aplikasi
@@ -123,6 +123,10 @@ Buka browser dan akses **`http://localhost:3000`**.
 
 ```text
 GuseoCare/
+├── database/                           # File skema dan seeding database PostgreSQL
+│   ├── schema.sql                      # Skema DDL struktur tabel & indeks PostgreSQL
+│   └── seed.js                         # Skrip seeding data awal & akun demo (dengan hashing bcrypt)
+│
 ├── public/                             # Aset statis yang dapat diakses langsung oleh browser
 │   ├── doctors/                        # Foto profil dokter (penamaan berdasarkan doctor_id, mis. 3.jpg - 13.jpg)
 │   ├── guseocare-logo.ico              # Logo dan favicon resmi GuseoCare
@@ -170,8 +174,7 @@ GuseoCare/
 ├── jsconfig.json                       # Konfigurasi path alias (@/* -> ./src/*)
 ├── next.config.mjs                     # Konfigurasi Next.js
 ├── package.json                        # Daftar dependensi & skrip NPM
-├── schema.sql                          # Skema DDL struktur tabel & indeks PostgreSQL
-└── seed.js                             # Skrip seeding data awal & akun demo (dengan hashing bcrypt)
+└── README.md                           # Dokumentasi proyek GuseoCare
 ```
 
 ---
