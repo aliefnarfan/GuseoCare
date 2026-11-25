@@ -1,75 +1,58 @@
-# GuseoCare — Hospital Management Information System (SIMRS)
+# GuseoCare — Hospital Management Information System
 
 **GuseoCare** adalah aplikasi web **Sistem Informasi Manajemen Rumah Sakit (SIMRS)** *full-stack* untuk **RS Pendidikan Universitas Guseo** yang dibangun menggunakan **Next.js (App Router)**, **PostgreSQL**, dan **Tailwind CSS**.
 
-Aplikasi ini mengintegrasikan alur pelayanan rumah sakit secara menyeluruh mulai dari direktori publik dokter & poliklinik, pendaftaran janji temu pasien, konfirmasi & pemeriksaan klinis oleh dokter, penerbitan rekam medis & resep elektronik, pencetakan dokumen PDF, hingga manajemen farmasi dan administrasi rumah sakit.
+Aplikasi ini mengintegrasikan alur pelayanan rumah sakit secara menyeluruh mulai dari direktori publik dokter & poliklinik, pendaftaran janji temu pasien, konfirmasi & pemeriksaan klinis oleh dokter, penerbitan rekam medis & resep elektronik, pencetakan dokumen PDF, hingga manajemen farmasi, administrasi, serta analitik operasional rumah sakit.
 
 ## Fitur Utama
 
 ### 1. Portal Publik & Mode Tamu (*Continue as Guest*)
 
 * **Halaman Beranda RS Pendidikan Universitas Guseo** dengan informasi layanan unggulan, unit poliklinik, dan kontak rumah sakit.
-
 * **Direktori Dokter Interaktif** lengkap dengan spesialisasi poliklinik, bio singkat, dan jadwal praktik.
-
 * Akses **"Lanjutkan sebagai Tamu"** langsung dari halaman login tanpa harus mendaftar terlebih dahulu.
 
 ### 2. Autentikasi, Otorisasi (RBAC), & Manajemen Profil
 
 * **Role-Based Access Control (RBAC)** melalui `middleware.js` dan sesi cookie terenkripsi untuk 3 peran: **Admin**, **Dokter**, dan **Pasien**.
-
 * Registrasi mandiri untuk pasien baru serta proteksi rute dashboard sesuai peran.
-
 * **Halaman Manajemen Profil (`/profile`)**: setiap pengguna dapat memperbarui nama lengkap, email, bio spesialisasi (khusus dokter), serta mengubah kata sandi secara mandiri.
 
 ### 3. Dashboard Pasien (`/dashboard/pasien`)
 
 * **Pendaftaran Janji Temu (Booking)** dengan validasi kecocokan hari praktik dokter, pencegahan bentrok slot, dan ringkasan jadwal *sticky*.
-
 * **Manajemen Jadwal & Status**: filter status (*Aktif* / *Selesai & Batal*), ubah jadwal (*Reschedule*), serta pembatalan mandiri untuk janji yang masih `pending`.
-
 * **Riwayat Rekam Medis & Resep Obat**: melihat hasil diagnosis, tindakan klinis, anjuran dokter, status penyiapan resep farmasi, serta tombol **Cetak / Unduh PDF** berkop resmi rumah sakit.
 
 ### 4. Dashboard Dokter (`/dashboard/dokter`)
 
 * **Antrean & Konfirmasi Pasien**: menyetujui (`approved`) atau menolak (`rejected` beserta alasan penolakan) pengajuan janji temu.
-
 * **Pemeriksaan Klinis & E-Prescription**: input diagnosis, tindakan medis, catatan anjuran, dan resep obat dinamis yang otomatis terhubung ke instalasi farmasi.
-
 * **Riwayat Pemeriksaan & Ekspor PDF**: daftar rekam medis pasien yang telah diperiksa beserta fitur **Cetak / Unduh PDF**.
-
 * **Manajemen Jadwal Praktik (`ScheduleManagementTab`)**: CRUD jadwal praktik berdurasi tetap **30 menit** dengan validasi **anti tumpang tindih (*overlap*)** dan proteksi hapus jika jadwal sudah terikat janji temu.
 
 ### 5. Dashboard Admin & Instalasi Farmasi (`/dashboard/admin`)
 
 * **Antrean Resep Farmasi**: memproses resep dari `menunggu diproses` → `siap diambil` (otomatis memotong stok gudang dalam transaksi database) → `sudah diambil`, lengkap dengan peringatan jika stok obat kurang.
-
 * **Manajemen Stok Obat (CRUD)**: tambah, edit/restok, hapus obat (dengan proteksi relasi resep), filter status stok (*Tersedia*, *Stok Menipis*, *Stok Habis*), pencarian, dan **sorting** (*Nama A–Z, Z–A, Stok Terendah, Stok Tertinggi*).
-
 * **Verifikasi & Monitoring Janji Temu**: memantau seluruh janji lintas poliklinik serta menyetujui/menolak janji berstatus `pending`.
-
 * **Manajemen Pengguna (CRUD)**: kelola akun Admin, Dokter (termasuk penempatan Poliklinik & Bio), dan Pasien dengan filter peran, filter tanggal daftar, pencarian nama, **sorting nama (A–Z / Z–A)**, serta proteksi hapus pengguna yang memiliki riwayat transaksi.
-
 * **Manajemen Poliklinik (CRUD)**: tambah, ubah, dan hapus unit poliklinik dengan proteksi *foreign key* apabila masih ada dokter terdaftar di poli tersebut.
+* **Laporan & Analitik Operasional (`AnalyticsReportTab`)**: ringkasan KPI *real-time*, visualisasi jumlah pasien & kunjungan per poliklinik, statistik penggunaan obat beserta sisa stok, serta tabel kinerja dan tingkat penyelesaian konsultasi per dokter.
 
 ### 6. Fitur Opsional (*Advanced Upgrades*) yang Diimplementasikan
 
+* **Laporan & Analitik (Admin)**: laporan jumlah pasien per poliklinik, kinerja dokter, dan statistik penggunaan obat secara *real-time*.
 * **Filter & Sorting Nama Pengguna / Dokter** (A–Z, Z–A, Registrasi Terbaru) di Dashboard Admin.
-
 * **Filter & Sorting Nama & Stok Obat** (A–Z, Z–A, Stok Terendah/Tertinggi, Status Stok) di Dashboard Admin.
-
 * **Cetak / Ekspor Rekam Medis & Resep ke PDF** berkop resmi RS Pendidikan Universitas Guseo untuk Pasien dan Dokter.
 
 ## Teknologi yang Digunakan
 
 * **Framework:** Next.js (App Router) & React
-
 * **Styling:** Tailwind CSS
-
 * **Database:** PostgreSQL (`pg`)
-
 * **Keamanan & Autentikasi:** `bcryptjs`, JWT (`jose`) / HTTP-Only Session Cookie, Next.js Middleware
-
 * **Ekspor Dokumen:** Native Browser Print-to-PDF Template (`src/lib/printMedicalRecord.js`)
 
 ## Struktur Folder Proyek
@@ -133,6 +116,7 @@ GuseoCare/
 │   │
 │   ├── components/                         # Komponen UI reusable
 │   │   ├── admin/
+│   │   │   ├── AnalyticsReportTab.jsx      # Tab laporan & analitik operasional (Admin)
 │   │   │   ├── PoliManagementTab.jsx       # Tab CRUD manajemen poliklinik (Admin)
 │   │   │   └── UserManagementTab.jsx       # Tab CRUD, filter, & sorting pengguna (Admin)
 │   │   ├── dokter/
@@ -181,7 +165,6 @@ GuseoCare/
 ### 1. Prasyarat
 
 * **Node.js** v18+
-
 * **PostgreSQL** v14+
 
 ### 2. Clone Repository & Install Dependensi
@@ -242,11 +225,7 @@ Buka browser dan akses **`http://localhost:3000`**.
 ## Identitas Pengembang
 
 * **Nama:** Muh. Alief Nur Afanni Arfan
-
 * **NIM:** H071251031
-
 * **Program Studi:** Sistem Informasi
-
 * **Institusi:** Universitas Hasanuddin
-
 * **GitHub:** [@aliefnarfan](https://github.com/aliefnarfan)

@@ -7,6 +7,7 @@ import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
 import UserManagementTab from '@/components/admin/UserManagementTab';
 import PoliManagementTab from '@/components/admin/PoliManagementTab';
+import AnalyticsReportTab from '@/components/admin/AnalyticsReportTab';
 
 function formatDateID(dateInput) {
   if (!dateInput) return '-';
@@ -486,6 +487,10 @@ export default function AdminDashboardPage() {
             {
               id: 'polis',
               label: `Manajemen Poli (${polis.length})`,
+            },
+            { 
+              id: 'analytics', 
+              label: 'Laporan & Analitik' 
             },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
@@ -1034,6 +1039,14 @@ export default function AdminDashboardPage() {
         {/* TAB 5: MANAJEMEN POLIKLINIK */}
         {activeTab === 'polis' && (
           <PoliManagementTab polis={polis} onRefresh={loadDashboardData} />
+        )}
+        {activeTab === 'analytics' && (
+          <AnalyticsReportTab
+            appointments={appointments}
+            prescriptions={prescriptions}
+            medicines={medicines}
+            polis={polis}
+            users={users}/>
         )}
       </main>
 
