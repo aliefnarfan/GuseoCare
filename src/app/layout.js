@@ -19,9 +19,9 @@ export const metadata = {
   description:
     "Sistem Informasi Manajemen Rumah Sakit Pendidikan Universitas Guseo untuk layanan janji temu, rekam medis, dan farmasi terpadu.",
   icons: {
-    icon: "/guseocare-logo.ico",
-    shortcut: "/guseocare-logo.ico",
-    apple: "/guseocare-logo.ico",
+    icon: "/guseocare-logo.png",
+    shortcut: "/guseocare-logo.png",
+    apple: "/guseocare-logo.png",
   },
 };
 

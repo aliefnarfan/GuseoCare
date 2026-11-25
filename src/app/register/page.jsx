@@ -54,9 +54,9 @@ export default function RegisterPage() {
         <div className="mb-6 text-center">
           <Link href="/" className="mx-auto mb-3 inline-flex items-center justify-center">
             <img
-              src="/guseocare-logo.ico"
+              src="/guseocare-logo.png"
               alt="Logo GuseoCare"
-              className="h-16 w-16 scale-125 object-contain"
+              className="h-16 w-16 scale-100 object-contain"
             />
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">

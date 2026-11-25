@@ -18,6 +18,7 @@ export default function Navbar({ user }) {
   const [activeSection, setActiveSection] = useState('beranda');
 
   const isOnDashboard = pathname?.startsWith('/dashboard');
+  const isOnProfile = pathname === '/profile';
 
   const dashboardHref =
     user?.role === 'admin'
@@ -77,26 +78,29 @@ export default function Navbar({ user }) {
         <Link
           href="/#beranda"
           onClick={() => setActiveSection('beranda')}
-          className="flex items-center gap-3.5"
+          className="flex items-center gap-3"
         >
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden">
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden">
             <img
-              src="/guseocare-logo.ico"
+              src="/guseocare-logo.png"
               alt="Logo GuseoCare"
-              className="h-full w-full scale-125 object-contain"
+              className="h-full w-full scale-100 object-contain"
             />
           </div>
-          <div>
-            <span className="block text-lg font-bold tracking-tight text-slate-900">
-              GuseoCare
+          <div className="leading-none">
+            <span className="block text-[22px] font-extrabold tracking-tight">
+              <span className="text-slate-900">Guseo</span>
+              <span className="bg-teal-600 bg-clip-text text-transparent">
+                Care
+              </span>
             </span>
-            <span className="block text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <span className="mt-0.5 block text-[11px] font-medium tracking-wide text-slate-600">
               RS Pendidikan Universitas Guseo
             </span>
           </div>
         </Link>
 
-        {/* 3 Menu Navigasi dengan Indikator Aktif & Garis Bawah */}
+        {/* Menu Navigasi dengan Indikator Aktif & Garis Bawah */}
         <nav className="hidden items-center gap-8 text-sm md:flex">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === '/' && activeSection === item.id;
@@ -113,7 +117,6 @@ export default function Navbar({ user }) {
                 }`}
               >
                 {item.label}
-                {/* Garis Indikator Aktif di Bawah Teks */}
                 <span
                   className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-teal-600 transition-transform duration-200 ${
                     isActive ? 'scale-x-100' : 'scale-x-0'
@@ -124,7 +127,7 @@ export default function Navbar({ user }) {
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {user ? (
             <>
               {isOnDashboard ? (
@@ -145,6 +148,17 @@ export default function Navbar({ user }) {
                   Dashboard ({user.role})
                 </Link>
               )}
+
+              <Link
+                href="/profile"
+                className={`rounded-lg border px-3.5 py-2 text-sm font-semibold transition ${
+                  isOnProfile
+                    ? 'border-teal-600 bg-teal-50 text-teal-700'
+                    : 'border-slate-300 bg-white text-slate-700 hover:border-teal-600 hover:text-teal-700'
+                }`}
+              >
+                Profil
+              </Link>
 
               <button
                 onClick={handleLogout}

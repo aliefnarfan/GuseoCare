@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import StatusBadge from '@/components/StatusBadge';
+import ScheduleManagementTab from '@/components/dokter/ScheduleManagementTab';
+import { printMedicalRecordPDF } from '@/lib/printMedicalRecord';
 
 function formatDateID(dateInput) {
   if (!dateInput) return '-';
@@ -23,9 +25,10 @@ export default function DoctorDashboardPage() {
   const [appointments, setAppointments] = useState([]);
   const [records, setRecords] = useState([]);
   const [medicines, setMedicines] = useState([]);
+  const [schedules, setSchedules] = useState([]);
   const [loadingPage, setLoadingPage] = useState(true);
 
-  const [activeTab, setActiveTab] = useState('queue'); // 'queue' | 'records'
+  const [activeTab, setActiveTab] = useState('queue'); // 'queue' | 'records' | 'schedules'
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'pending' | 'approved' | 'history'
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
@@ -46,11 +49,12 @@ export default function DoctorDashboardPage() {
 
   async function loadDashboardData() {
     try {
-      const [meRes, aptRes, recRes, medRes] = await Promise.all([
+      const [meRes, aptRes, recRes, medRes, schRes] = await Promise.all([
         fetch('/api/auth/me'),
         fetch('/api/appointments'),
         fetch('/api/medical-records'),
         fetch('/api/medicines'),
+        fetch('/api/schedules'),
       ]);
 
       if (!meRes.ok) {
@@ -76,6 +80,7 @@ export default function DoctorDashboardPage() {
       const aptData = aptRes.ok ? await aptRes.json() : { appointments: [] };
       const recData = recRes.ok ? await recRes.json() : { medical_records: [] };
       const medData = medRes.ok ? await medRes.json() : { medicines: [] };
+      const schData = schRes.ok ? await schRes.json() : { schedules: [] };
 
       setUser(currentUser);
       setAppointments(aptData.appointments || []);
@@ -83,6 +88,7 @@ export default function DoctorDashboardPage() {
       setMedicines(
         medData.medicines || (Array.isArray(medData) ? medData : [])
       );
+      setSchedules(schData.schedules || []);
     } catch (err) {
       console.error('Gagal memuat data dashboard dokter:', err);
     } finally {
@@ -123,7 +129,10 @@ export default function DoctorDashboardPage() {
     }
     if (statusFilter === 'history') {
       return sortedAppointments.filter(
-        (a) => a.status === 'done' || a.status === 'rejected' || a.status === 'cancelled'
+        (a) =>
+          a.status === 'done' ||
+          a.status === 'rejected' ||
+          a.status === 'cancelled'
       );
     }
     return sortedAppointments;
@@ -133,7 +142,8 @@ export default function DoctorDashboardPage() {
   const approvedCount = appointments.filter((a) => a.status === 'approved').length;
   const doneCount = appointments.filter((a) => a.status === 'done').length;
   const historyCount = appointments.filter(
-    (a) => a.status === 'done' || a.status === 'rejected' || a.status === 'cancelled'
+    (a) =>
+      a.status === 'done' || a.status === 'rejected' || a.status === 'cancelled'
   ).length;
 
   async function handleApprove(aptId) {
@@ -298,8 +308,8 @@ export default function DoctorDashboardPage() {
                 Selamat Bertugas, {user?.name}
               </h1>
               <p className="mt-1 text-sm text-slate-300">
-                Konfirmasi pengajuan janji temu, lakukan pemeriksaan klinis, dan terbitkan
-                resep obat ke instalasi farmasi.
+                Konfirmasi pengajuan janji temu, lakukan pemeriksaan klinis, atur
+                jadwal praktik, dan terbitkan resep obat ke instalasi farmasi.
               </p>
             </div>
 
@@ -339,6 +349,7 @@ export default function DoctorDashboardPage() {
           {[
             { id: 'queue', label: `Antrean & Konfirmasi (${appointments.length})` },
             { id: 'records', label: `Riwayat Pemeriksaan (${records.length})` },
+            { id: 'schedules', label: `Jadwal Praktik Saya (${schedules.length})` },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -522,9 +533,23 @@ export default function DoctorDashboardPage() {
                         </h3>
                       </div>
 
-                      {rec.prs_id && rec.prescription_status && (
-                        <StatusBadge status={rec.prescription_status} />
-                      )}
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        {rec.prs_id && rec.prescription_status && (
+                          <StatusBadge status={rec.prescription_status} />
+                        )}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            printMedicalRecordPDF(rec, {
+                              doctorName: user?.name,
+                            })
+                          }
+                          className="rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-teal-600 hover:bg-teal-50 hover:text-teal-700"
+                        >
+                          Cetak / Unduh PDF
+                        </button>
+                      </div>
+                      
                     </div>
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -597,6 +622,14 @@ export default function DoctorDashboardPage() {
             )}
           </div>
         )}
+
+        {/* TAB 3: JADWAL PRAKTIK SAYA */}
+        {activeTab === 'schedules' && (
+          <ScheduleManagementTab
+            schedules={schedules}
+            onRefresh={loadDashboardData}
+          />
+        )}
       </main>
 
       {/* MODAL TOLAK JANJI TEMU */}
@@ -607,8 +640,9 @@ export default function DoctorDashboardPage() {
               Tolak Janji Temu #{rejectTarget.apt_id}
             </h3>
             <p className="mt-1 text-xs text-slate-500">
-              Pasien: <strong className="text-slate-800">{rejectTarget.patient_name}</strong>{' '}
-              • {formatDateID(rejectTarget.booking_date || rejectTarget.apt_date)}
+              Pasien:{' '}
+              <strong className="text-slate-800">{rejectTarget.patient_name}</strong>{' '}
+              - {formatDateID(rejectTarget.booking_date || rejectTarget.apt_date)}
             </p>
 
             <form onSubmit={handleRejectSubmit} className="mt-4 space-y-4">

@@ -56,18 +56,21 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
         <div className="mb-6 text-center">
-          <Link href="/" className="mx-auto mb-3 inline-flex items-center justify-center">
+          <Link
+            href="/"
+            className="mx-auto mb-3 inline-flex items-center justify-center"
+          >
             <img
-              src="/guseocare-logo.ico"
+              src="/guseocare-logo.png"
               alt="Logo GuseoCare"
-              className="h-16 w-16 scale-125 object-contain"
+              className="h-16 w-16 scale-100 object-contain"
             />
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Masuk ke GuseoCare
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Portal Pasien, Dokter & Administrasi RS Universitas Guseo
+            Portal Pasien, Dokter &amp; Administrasi RS Universitas Guseo
           </p>
         </div>
 
@@ -117,19 +120,22 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-slate-600">
           Belum punya akun pasien?{' '}
-          <Link href="/register" className="font-semibold text-teal-600 hover:underline">
+          <Link
+            href="/register"
+            className="font-semibold text-teal-600 hover:underline"
+          >
             Daftar sekarang
           </Link>
         </p>
 
-        {/* Tautan Kembali ke Beranda */}
+        {/* Tautan Lanjutkan sebagai Tamu (Continue as Guest) */}
         <div className="mt-5 border-t border-slate-100 pt-4 text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 transition hover:text-teal-600"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-teal-600 hover:bg-teal-50 hover:text-teal-700"
           >
-            <span>&larr;</span>
-            <span>Kembali ke Beranda</span>
+            <span>Lanjutkan sebagai Tamu</span>
+            <span>&rarr;</span>
           </Link>
         </div>
       </div>
