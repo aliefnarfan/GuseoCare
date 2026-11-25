@@ -78,20 +78,23 @@ export default function Navbar({ user }) {
         <Link
           href="/#beranda"
           onClick={() => setActiveSection('beranda')}
-          className="flex items-center gap-3.5"
+          className="flex items-center gap-3"
         >
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden">
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden">
             <img
-              src="/guseocare-logo.ico"
+              src="/guseocare-logo.png"
               alt="Logo GuseoCare"
-              className="h-full w-full scale-125 object-contain"
+              className="h-full w-full scale-100 object-contain"
             />
           </div>
-          <div>
-            <span className="block text-lg font-bold tracking-tight text-slate-900">
-              GuseoCare
+          <div className="leading-none">
+            <span className="block text-[22px] font-extrabold tracking-tight">
+              <span className="text-slate-900">Guseo</span>
+              <span className="bg-teal-600 bg-clip-text text-transparent">
+                Care
+              </span>
             </span>
-            <span className="block text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <span className="mt-0.5 block text-[11px] font-medium tracking-wide text-slate-600">
               RS Pendidikan Universitas Guseo
             </span>
           </div>

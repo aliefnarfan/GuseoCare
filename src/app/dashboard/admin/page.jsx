@@ -36,7 +36,8 @@ export default function AdminDashboardPage() {
   const [prsFilter, setPrsFilter] = useState('all');
   const [aptFilter, setAptFilter] = useState('all');
   const [medSearch, setMedSearch] = useState('');
-  const [medStockFilter, setMedStockFilter] = useState('all'); // 'all' | 'available' | 'low' | 'empty'
+  const [medStockFilter, setMedStockFilter] = useState('all'); 
+  const [medSort, setMedSort] = useState('name-asc'); 
 
   // Action states Resep
   const [processingPrsId, setProcessingPrsId] = useState(null);
@@ -145,23 +146,36 @@ export default function AdminDashboardPage() {
 
   // Filter Obat (Pencarian + Status Stok)
   const visibleMedicines = useMemo(() => {
-    const q = medSearch.trim().toLowerCase();
-    return medicines.filter((m) => {
-      const stock = Number(m.stock);
-      if (medStockFilter === 'available' && stock <= 0) return false;
-      if (medStockFilter === 'low' && (stock <= 0 || stock > 10)) return false;
-      if (medStockFilter === 'empty' && stock !== 0) return false;
+  const q = medSearch.trim().toLowerCase();
+  const filtered = medicines.filter((m) => {
+    const stock = Number(m.stock);
+    if (medStockFilter === 'available' && stock <= 0) return false;
+    if (medStockFilter === 'low' && (stock <= 0 || stock > 10)) return false;
+    if (medStockFilter === 'empty' && stock !== 0) return false;
 
-      if (q) {
-        return (
-          m.name.toLowerCase().includes(q) ||
-          String(m.desc || '').toLowerCase().includes(q) ||
-          String(m.type || '').toLowerCase().includes(q)
-        );
-      }
-      return true;
-    });
-  }, [medicines, medSearch, medStockFilter]);
+    if (q) {
+      return (
+        m.name.toLowerCase().includes(q) ||
+        String(m.desc || '').toLowerCase().includes(q) ||
+        String(m.type || '').toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  return [...filtered].sort((a, b) => {
+    if (medSort === 'name-asc') {
+      return String(a.name || '').localeCompare(String(b.name || ''), 'id');
+    }
+    if (medSort === 'name-desc') {
+      return String(b.name || '').localeCompare(String(a.name || ''), 'id');
+    }
+    if (medSort === 'stock-asc') {
+      return Number(a.stock) - Number(b.stock);
+    }
+    return Number(b.stock) - Number(a.stock);
+  });
+}, [medicines, medSearch, medStockFilter, medSort]);
 
   // Filter Janji Temu
   const visibleAppointments = useMemo(() => {
@@ -755,13 +769,25 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
 
-              <input
-                type="text"
-                value={medSearch}
-                onChange={(e) => setMedSearch(e.target.value)}
-                placeholder="Cari nama obat, deskripsi, atau kategori..."
-                className="w-full max-w-xs rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs text-slate-900 focus:border-teal-600 focus:outline-none"
-              />
+              <div className="flex flex-wrap items-center gap-2.5 sm:flex-nowrap">
+                <input
+                  type="text"
+                  value={medSearch}
+                  onChange={(e) => setMedSearch(e.target.value)}
+                  placeholder="Cari nama obat, deskripsi, atau kategori..."
+                  className="w-64 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs text-slate-900 focus:border-teal-600 focus:outline-none"
+                />
+                <select
+                  value={medSort}
+                  onChange={(e) => setMedSort(e.target.value)}
+                  className="shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 focus:border-teal-600 focus:outline-none"
+                >
+                  <option value="name-asc">Urutkan: Nama A–Z</option>
+                  <option value="name-desc">Urutkan: Nama Z–A</option>
+                  <option value="stock-asc">Urutkan: Stok Terendah</option>
+                  <option value="stock-desc">Urutkan: Stok Tertinggi</option>
+                </select>
+              </div>
             </div>
 
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">

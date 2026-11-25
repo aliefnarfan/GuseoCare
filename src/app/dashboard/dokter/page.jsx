@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import StatusBadge from '@/components/StatusBadge';
 import ScheduleManagementTab from '@/components/dokter/ScheduleManagementTab';
+import { printMedicalRecordPDF } from '@/lib/printMedicalRecord';
 
 function formatDateID(dateInput) {
   if (!dateInput) return '-';
@@ -532,9 +533,23 @@ export default function DoctorDashboardPage() {
                         </h3>
                       </div>
 
-                      {rec.prs_id && rec.prescription_status && (
-                        <StatusBadge status={rec.prescription_status} />
-                      )}
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        {rec.prs_id && rec.prescription_status && (
+                          <StatusBadge status={rec.prescription_status} />
+                        )}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            printMedicalRecordPDF(rec, {
+                              doctorName: user?.name,
+                            })
+                          }
+                          className="rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-teal-600 hover:bg-teal-50 hover:text-teal-700"
+                        >
+                          Cetak / Unduh PDF
+                        </button>
+                      </div>
+                      
                     </div>
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-3">

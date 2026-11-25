@@ -29,6 +29,7 @@ export default function UserManagementTab({
   const [dateFilter, setDateFilter] = useState('');
   const [search, setSearch] = useState('');
   const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const [sortOrder, setSortOrder] = useState('name-asc');
 
   // Modal Create / Edit
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,20 +57,30 @@ export default function UserManagementTab({
   }, [users]);
 
   const visibleUsers = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return users.filter((u) => {
-      if (roleFilter !== 'all' && u.role !== roleFilter) return false;
-      if (dateFilter && getDateOnlyISO(u.created_at) !== dateFilter) return false;
-      if (q) {
-        const match =
-          String(u.name || '').toLowerCase().includes(q) ||
-          String(u.email || '').toLowerCase().includes(q) ||
-          String(u.poli_name || '').toLowerCase().includes(q);
-        if (!match) return false;
-      }
-      return true;
-    });
-  }, [users, roleFilter, dateFilter, search]);
+  const q = search.trim().toLowerCase();
+  const filtered = users.filter((u) => {
+    if (roleFilter !== 'all' && u.role !== roleFilter) return false;
+    if (dateFilter && getDateOnlyISO(u.created_at) !== dateFilter) return false;
+    if (q) {
+      const match =
+        String(u.name || '').toLowerCase().includes(q) ||
+        String(u.email || '').toLowerCase().includes(q) ||
+        String(u.poli_name || '').toLowerCase().includes(q);
+      if (!match) return false;
+    }
+    return true;
+  });
+
+  return [...filtered].sort((a, b) => {
+    if (sortOrder === 'name-asc') {
+      return String(a.name || '').localeCompare(String(b.name || ''), 'id');
+    }
+    if (sortOrder === 'name-desc') {
+      return String(b.name || '').localeCompare(String(a.name || ''), 'id');
+    }
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  });
+}, [users, roleFilter, dateFilter, search, sortOrder]);
 
   function openCreateModal() {
     setEditingUser(null);
@@ -269,6 +280,15 @@ export default function UserManagementTab({
             placeholder="Cari nama, email, atau poli..."
             className="w-60 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 focus:border-teal-600 focus:outline-none"
           />
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 focus:border-teal-600 focus:outline-none"
+          >
+            <option value="name-asc">Urutkan: Nama A–Z</option>
+            <option value="name-desc">Urutkan: Nama Z–A</option>
+            <option value="newest">Urutkan: Registrasi Terbaru</option>
+          </select>
         </div>
       </div>
 
